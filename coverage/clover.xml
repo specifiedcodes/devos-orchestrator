@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1770976655885" clover="3.2.0">
+  <project timestamp="1770976655885" name="All files">
+    <metrics statements="281" coveredstatements="255" conditionals="87" coveredconditionals="66" methods="69" coveredmethods="60" elements="437" coveredelements="381" complexity="0" loc="281" ncloc="281" packages="3" files="6" classes="6"/>
+    <package name="cli">
+      <metrics statements="103" coveredstatements="94" conditionals="43" coveredconditionals="30" methods="28" coveredmethods="25"/>
+      <file name="claude-code-session.ts" path="/Users/rajatpratapsingh/Desktop/devos/devos-orchestrator/src/cli/claude-code-session.ts">
+        <metrics statements="103" coveredstatements="94" conditionals="43" coveredconditionals="30" methods="28" coveredmethods="25"/>
+        <line num="10" count="4" type="stmt"/>
+        <line num="11" count="4" type="stmt"/>
+        <line num="12" count="4" type="stmt"/>
+        <line num="13" count="4" type="stmt"/>
+        <line num="25" count="4" type="stmt"/>
+        <line num="35" count="4" type="stmt"/>
+        <line num="38" count="50" type="stmt"/>
+        <line num="39" count="50" type="stmt"/>
+        <line num="40" count="50" type="stmt"/>
+        <line num="41" count="50" type="stmt"/>
+        <line num="42" count="50" type="stmt"/>
+        <line num="50" count="50" type="stmt"/>
+        <line num="51" count="50" type="stmt"/>
+        <line num="52" count="50" type="stmt"/>
+        <line num="53" count="50" type="stmt"/>
+        <line num="60" count="4" type="stmt"/>
+        <line num="67" count="7" type="stmt"/>
+        <line num="74" count="10" type="stmt"/>
+        <line num="81" count="19" type="cond" truecount="2" falsecount="0"/>
+        <line num="93" count="45" type="cond" truecount="4" falsecount="0"/>
+        <line num="94" count="1" type="stmt"/>
+        <line num="97" count="44" type="cond" truecount="1" falsecount="0"/>
+        <line num="101" count="44" type="stmt"/>
+        <line num="103" count="44" type="stmt"/>
+        <line num="104" count="44" type="stmt"/>
+        <line num="114" count="1" type="stmt"/>
+        <line num="115" count="1" type="stmt"/>
+        <line num="118" count="43" type="stmt"/>
+        <line num="119" count="43" type="stmt"/>
+        <line num="120" count="43" type="stmt"/>
+        <line num="122" count="43" type="stmt"/>
+        <line num="123" count="43" type="stmt"/>
+        <line num="125" count="43" type="stmt"/>
+        <line num="132" count="43" type="cond" truecount="1" falsecount="1"/>
+        <line num="135" count="43" type="cond" truecount="1" falsecount="1"/>
+        <line num="136" count="43" type="stmt"/>
+        <line num="141" count="43" type="stmt"/>
+        <line num="142" count="1" type="stmt"/>
+        <line num="147" count="43" type="cond" truecount="1" falsecount="1"/>
+        <line num="148" count="43" type="stmt"/>
+        <line num="153" count="43" type="stmt"/>
+        <line num="154" count="1" type="stmt"/>
+        <line num="163" count="43" type="cond" truecount="1" falsecount="1"/>
+        <line num="165" count="43" type="stmt"/>
+        <line num="166" count="11" type="stmt"/>
+        <line num="169" count="43" type="stmt"/>
+        <line num="170" count="1" type="stmt"/>
+        <line num="178" count="2" type="stmt"/>
+        <line num="180" count="2" type="stmt"/>
+        <line num="189" count="2" type="stmt"/>
+        <line num="190" count="2" type="stmt"/>
+        <line num="197" count="20" type="stmt"/>
+        <line num="200" count="20" type="stmt"/>
+        <line num="201" count="0" type="stmt"/>
+        <line num="209" count="11" type="stmt"/>
+        <line num="212" count="11" type="stmt"/>
+        <line num="221" count="11" type="stmt"/>
+        <line num="222" count="11" type="stmt"/>
+        <line num="225" count="11" type="stmt"/>
+        <line num="231" count="11" type="stmt"/>
+        <line num="234" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="235" count="3" type="stmt"/>
+        <line num="236" count="3" type="stmt"/>
+        <line num="247" count="8" type="cond" truecount="4" falsecount="0"/>
+        <line num="248" count="1" type="stmt"/>
+        <line num="251" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="252" count="0" type="stmt"/>
+        <line num="256" count="7" type="stmt"/>
+        <line num="265" count="7" type="stmt"/>
+        <line num="266" count="7" type="stmt"/>
+        <line num="268" count="7" type="stmt"/>
+        <line num="269" count="7" type="stmt"/>
+        <line num="270" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="271" count="0" type="stmt"/>
+        <line num="275" count="1" type="stmt"/>
+        <line num="285" count="8" type="cond" truecount="4" falsecount="0"/>
+        <line num="286" count="1" type="stmt"/>
+        <line num="287" count="1" type="stmt"/>
+        <line num="290" count="7" type="stmt"/>
+        <line num="291" count="7" type="stmt"/>
+        <line num="294" count="7" type="stmt"/>
+        <line num="295" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="296" count="7" type="stmt"/>
+        <line num="298" count="7" type="stmt"/>
+        <line num="302" count="7" type="stmt"/>
+        <line num="305" count="7" type="stmt"/>
+        <line num="308" count="7" type="stmt"/>
+        <line num="309" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="310" count="1" type="stmt"/>
+        <line num="323" count="3" type="stmt"/>
+        <line num="324" count="3" type="stmt"/>
+        <line num="333" count="0" type="stmt"/>
+        <line num="342" count="0" type="stmt"/>
+        <line num="354" count="2" type="stmt"/>
+        <line num="364" count="2" type="stmt"/>
+        <line num="374" count="16" type="cond" truecount="1" falsecount="1"/>
+        <line num="375" count="0" type="stmt"/>
+        <line num="378" count="16" type="stmt"/>
+        <line num="379" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="380" count="1" type="stmt"/>
+        <line num="389" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="390" count="0" type="stmt"/>
+        <line num="391" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="cli.interfaces">
+      <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+      <file name="cli-session.interfaces.ts" path="/Users/rajatpratapsingh/Desktop/devos/devos-orchestrator/src/cli/interfaces/cli-session.interfaces.ts">
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="115" count="9" type="stmt"/>
+        <line num="124" count="9" type="stmt"/>
+      </file>
+      <file name="index.ts" path="/Users/rajatpratapsingh/Desktop/devos/devos-orchestrator/src/cli/interfaces/index.ts">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+        <line num="4" count="9" type="stmt"/>
+        <line num="15" count="149" type="stmt"/>
+        <line num="16" count="115" type="stmt"/>
+      </file>
+    </package>
+    <package name="cli.services">
+      <metrics statements="173" coveredstatements="156" conditionals="44" coveredconditionals="36" methods="39" coveredmethods="33"/>
+      <file name="cli-session-redis.service.ts" path="/Users/rajatpratapsingh/Desktop/devos/devos-orchestrator/src/cli/services/cli-session-redis.service.ts">
+        <metrics statements="59" coveredstatements="48" conditionals="13" coveredconditionals="10" methods="15" coveredmethods="10"/>
+        <line num="11" count="4" type="stmt"/>
+        <line num="21" count="4" type="stmt"/>
+        <line num="26" count="27" type="stmt"/>
+        <line num="27" count="27" type="stmt"/>
+        <line num="41" count="20" type="stmt"/>
+        <line num="42" count="20" type="stmt"/>
+        <line num="43" count="20" type="stmt"/>
+        <line num="46" count="20" type="stmt"/>
+        <line num="60" count="20" type="stmt"/>
+        <line num="63" count="20" type="stmt"/>
+        <line num="66" count="20" type="stmt"/>
+        <line num="76" count="14" type="stmt"/>
+        <line num="77" count="14" type="stmt"/>
+        <line num="80" count="14" type="cond" truecount="4" falsecount="0"/>
+        <line num="81" count="4" type="stmt"/>
+        <line num="85" count="10" type="stmt"/>
+        <line num="106" count="9" type="stmt"/>
+        <line num="108" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="109" count="3" type="stmt"/>
+        <line num="112" count="6" type="stmt"/>
+        <line num="113" count="6" type="stmt"/>
+        <line num="114" count="6" type="stmt"/>
+        <line num="117" count="6" type="stmt"/>
+        <line num="120" count="6" type="stmt"/>
+        <line num="123" count="6" type="stmt"/>
+        <line num="132" count="3" type="stmt"/>
+        <line num="133" count="3" type="stmt"/>
+        <line num="135" count="3" type="stmt"/>
+        <line num="138" count="3" type="stmt"/>
+        <line num="148" count="20" type="stmt"/>
+        <line num="149" count="20" type="stmt"/>
+        <line num="159" count="18" type="stmt"/>
+        <line num="160" count="18" type="stmt"/>
+        <line num="170" count="2" type="stmt"/>
+        <line num="171" count="2" type="stmt"/>
+        <line num="181" count="2" type="stmt"/>
+        <line num="183" count="2" type="stmt"/>
+        <line num="186" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="187" count="2" type="stmt"/>
+        <line num="198" count="0" type="stmt"/>
+        <line num="199" count="0" type="stmt"/>
+        <line num="209" count="0" type="stmt"/>
+        <line num="210" count="0" type="stmt"/>
+        <line num="220" count="0" type="stmt"/>
+        <line num="221" count="0" type="stmt"/>
+        <line num="230" count="0" type="stmt"/>
+        <line num="231" count="0" type="stmt"/>
+        <line num="240" count="3" type="stmt"/>
+        <line num="241" count="3" type="stmt"/>
+        <line num="243" count="3" type="stmt"/>
+        <line num="244" count="3" type="stmt"/>
+        <line num="252" count="3" type="stmt"/>
+        <line num="255" count="3" type="stmt"/>
+        <line num="256" count="4" type="stmt"/>
+        <line num="257" count="4" type="stmt"/>
+        <line num="261" count="3" type="stmt"/>
+        <line num="271" count="0" type="stmt"/>
+        <line num="272" count="0" type="stmt"/>
+        <line num="273" count="0" type="stmt"/>
+      </file>
+      <file name="health-monitor.service.ts" path="/Users/rajatpratapsingh/Desktop/devos/devos-orchestrator/src/cli/services/health-monitor.service.ts">
+        <metrics statements="59" coveredstatements="57" conditionals="14" coveredconditionals="12" methods="10" coveredmethods="10"/>
+        <line num="10" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="36" count="2" type="stmt"/>
+        <line num="41" count="24" type="stmt"/>
+        <line num="42" count="24" type="stmt"/>
+        <line num="50" count="24" type="stmt"/>
+        <line num="51" count="24" type="stmt"/>
+        <line num="52" count="24" type="stmt"/>
+        <line num="53" count="24" type="stmt"/>
+        <line num="54" count="24" type="stmt"/>
+        <line num="61" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="62" count="1" type="stmt"/>
+        <line num="65" count="6" type="stmt"/>
+        <line num="68" count="6" type="stmt"/>
+        <line num="71" count="6" type="stmt"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="81" count="26" type="cond" truecount="2" falsecount="0"/>
+        <line num="82" count="20" type="stmt"/>
+        <line num="85" count="6" type="stmt"/>
+        <line num="87" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="88" count="6" type="stmt"/>
+        <line num="89" count="6" type="stmt"/>
+        <line num="97" count="3" type="stmt"/>
+        <line num="104" count="19" type="stmt"/>
+        <line num="105" count="19" type="stmt"/>
+        <line num="106" count="19" type="stmt"/>
+        <line num="107" count="19" type="stmt"/>
+        <line num="108" count="19" type="stmt"/>
+        <line num="110" count="19" type="stmt"/>
+        <line num="112" count="19" type="stmt"/>
+        <line num="113" count="18" type="stmt"/>
+        <line num="116" count="18" type="stmt"/>
+        <line num="117" count="9" type="stmt"/>
+        <line num="119" count="9" type="cond" truecount="1" falsecount="1"/>
+        <line num="120" count="0" type="stmt"/>
+        <line num="123" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="124" count="1" type="stmt"/>
+        <line num="125" count="1" type="stmt"/>
+        <line num="129" count="8" type="stmt"/>
+        <line num="130" count="8" type="stmt"/>
+        <line num="132" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="133" count="5" type="stmt"/>
+        <line num="134" count="5" type="stmt"/>
+        <line num="136" count="3" type="stmt"/>
+        <line num="140" count="1" type="stmt"/>
+        <line num="143" count="19" type="stmt"/>
+        <line num="152" count="19" type="stmt"/>
+        <line num="154" count="19" type="stmt"/>
+        <line num="161" count="2" type="stmt"/>
+        <line num="170" count="5" type="stmt"/>
+        <line num="176" count="5" type="stmt"/>
+        <line num="182" count="5" type="stmt"/>
+        <line num="184" count="5" type="stmt"/>
+        <line num="186" count="1" type="stmt"/>
+        <line num="192" count="1" type="stmt"/>
+        <line num="193" count="1" type="stmt"/>
+        <line num="195" count="0" type="stmt"/>
+        <line num="207" count="1" type="stmt"/>
+        <line num="214" count="1" type="stmt"/>
+      </file>
+      <file name="session-manager.service.ts" path="/Users/rajatpratapsingh/Desktop/devos/devos-orchestrator/src/cli/services/session-manager.service.ts">
+        <metrics statements="55" coveredstatements="51" conditionals="17" coveredconditionals="14" methods="14" coveredmethods="13"/>
+        <line num="10" count="3" type="stmt"/>
+        <line num="11" count="3" type="stmt"/>
+        <line num="13" count="3" type="stmt"/>
+        <line num="29" count="3" type="stmt"/>
+        <line num="30" count="30" type="stmt"/>
+        <line num="31" count="30" type="stmt"/>
+        <line num="39" count="30" type="stmt"/>
+        <line num="40" count="30" type="stmt"/>
+        <line num="62" count="36" type="stmt"/>
+        <line num="63" count="36" type="cond" truecount="2" falsecount="0"/>
+        <line num="64" count="3" type="stmt"/>
+        <line num="70" count="33" type="stmt"/>
+        <line num="73" count="33" type="stmt"/>
+        <line num="80" count="33" type="stmt"/>
+        <line num="85" count="33" type="stmt"/>
+        <line num="86" count="33" type="stmt"/>
+        <line num="99" count="33" type="stmt"/>
+        <line num="102" count="33" type="stmt"/>
+        <line num="103" count="33" type="stmt"/>
+        <line num="106" count="33" type="stmt"/>
+        <line num="107" count="2" type="stmt"/>
+        <line num="112" count="33" type="stmt"/>
+        <line num="113" count="4" type="stmt"/>
+        <line num="116" count="33" type="stmt"/>
+        <line num="126" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="136" count="4" type="stmt"/>
+        <line num="137" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="138" count="1" type="stmt"/>
+        <line num="140" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="149" count="5" type="stmt"/>
+        <line num="158" count="6" type="stmt"/>
+        <line num="160" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="161" count="2" type="stmt"/>
+        <line num="165" count="4" type="stmt"/>
+        <line num="169" count="4" type="stmt"/>
+        <line num="176" count="3" type="stmt"/>
+        <line num="178" count="3" type="stmt"/>
+        <line num="179" count="5" type="stmt"/>
+        <line num="181" count="5" type="stmt"/>
+        <line num="186" count="3" type="stmt"/>
+        <line num="189" count="3" type="stmt"/>
+        <line num="190" count="3" type="stmt"/>
+        <line num="197" count="0" type="stmt"/>
+        <line num="206" count="2" type="stmt"/>
+        <line num="207" count="2" type="stmt"/>
+        <line num="209" count="0" type="stmt"/>
+        <line num="223" count="4" type="stmt"/>
+        <line num="224" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="225" count="0" type="stmt"/>
+        <line num="228" count="4" type="stmt"/>
+        <line num="239" count="13" type="stmt"/>
+        <line num="240" count="13" type="stmt"/>
+        <line num="243" count="13" type="stmt"/>
+        <line num="244" count="13" type="stmt"/>
+        <line num="246" count="0" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>

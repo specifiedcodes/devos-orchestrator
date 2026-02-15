@@ -7,6 +7,7 @@
 
 import dotenv from 'dotenv';
 import { CliModule, CliModuleConfig } from './cli';
+import { createProviderRegistry, ProviderRegistry } from './providers';
 
 dotenv.config();
 
@@ -15,6 +16,9 @@ console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 
 // CLI Module instance (initialized on startup)
 let cliModule: CliModule | null = null;
+
+// Provider Registry instance (initialized on startup)
+let providerRegistry: ProviderRegistry | null = null;
 
 /**
  * Initializes the orchestrator services
@@ -48,6 +52,10 @@ async function initialize(): Promise<void> {
     // This allows the orchestrator to start in degraded mode
     cliModule = null;
   }
+
+  // Initialize Provider Registry
+  providerRegistry = createProviderRegistry();
+  console.log('Provider Registry initialized with', providerRegistry.getAllProviders().length, 'providers');
 }
 
 /**
@@ -85,5 +93,6 @@ initialize().catch((error) => {
 });
 
 // Export for external access
-export { cliModule };
+export { cliModule, providerRegistry };
 export { CliModule } from './cli';
+export { ProviderRegistry, createProviderRegistry } from './providers';

@@ -119,7 +119,7 @@ const MODEL_FIXTURES: Record<string, ModelDefinition> = {
     modelId: 'deepseek-chat',
     provider: 'deepseek',
     displayName: 'DeepSeek Chat',
-    contextWindow: 64000,
+    contextWindow: 128000,
     inputPricePer1M: 0.27,
     outputPricePer1M: 1.10,
     qualityTier: 'economy',
@@ -130,7 +130,7 @@ const MODEL_FIXTURES: Record<string, ModelDefinition> = {
     modelId: 'deepseek-reasoner',
     provider: 'deepseek',
     displayName: 'DeepSeek Reasoner',
-    contextWindow: 64000,
+    contextWindow: 128000,
     inputPricePer1M: 0.55,
     outputPricePer1M: 2.19,
     qualityTier: 'standard',
@@ -1062,6 +1062,64 @@ describe('TaskModelRouter', () => {
       // Default simple_chat is gemini-2.0-flash, but google disabled
       // Should fall back to a suitable model from enabled providers
       expect(decision.provider).not.toBe('google');
+    });
+  });
+
+  // ===== Story 13-5: DeepSeek Routing Integration Tests =====
+
+  describe('DeepSeek routing (Story 13-5)', () => {
+    it('should include deepseek-chat as fallback for simple_chat', async () => {
+      // simple_chat default is gemini-2.0-flash. Disable google -> fallback chain includes deepseek-chat
+      const request = createRequest({ taskType: 'simple_chat' });
+      const config = createDefaultWorkspaceConfig({
+        enabledProviders: ['deepseek'] as ProviderID[],
+      });
+
+      const decision = await router.routeTask(request, config);
+
+      expect(decision.selectedModel).toBe('deepseek-chat');
+      expect(decision.provider).toBe('deepseek');
+    });
+
+    it('should include deepseek-chat as fallback for coding when DeepSeek provider enabled', async () => {
+      // Coding: default=claude-sonnet(anthropic), fallbacks=[gpt-4o(openai), deepseek-chat(deepseek), gemini-2.0-pro(google)]
+      // Disable anthropic and openai -> deepseek-chat should be selected
+      const request = createRequest({ taskType: 'coding' });
+      const config = createDefaultWorkspaceConfig({
+        enabledProviders: ['deepseek', 'google'] as ProviderID[],
+      });
+
+      const decision = await router.routeTask(request, config);
+
+      expect(decision.selectedModel).toBe('deepseek-chat');
+      expect(decision.provider).toBe('deepseek');
+    });
+
+    it('should include deepseek-reasoner as fallback for complex_reasoning', async () => {
+      // complex_reasoning: default=claude-opus, fallbacks=[claude-sonnet, gpt-4o, deepseek-reasoner]
+      // Disable all except deepseek -> deepseek-reasoner should be selected
+      const request = createRequest({ taskType: 'complex_reasoning' });
+      const config = createDefaultWorkspaceConfig({
+        enabledProviders: ['deepseek'] as ProviderID[],
+      });
+
+      const decision = await router.routeTask(request, config);
+
+      expect(decision.selectedModel).toBe('deepseek-reasoner');
+      expect(decision.provider).toBe('deepseek');
+    });
+
+    it('should fall back correctly when DeepSeek provider not in enabledProviders', async () => {
+      // Coding with only google enabled -> should not select deepseek-chat
+      const request = createRequest({ taskType: 'coding' });
+      const config = createDefaultWorkspaceConfig({
+        enabledProviders: ['google'] as ProviderID[],
+      });
+
+      const decision = await router.routeTask(request, config);
+
+      expect(decision.provider).not.toBe('deepseek');
+      expect(decision.selectedModel).not.toBe('deepseek-chat');
     });
   });
 

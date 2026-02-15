@@ -226,3 +226,63 @@ describe('DeepSeekProvider', () => {
     });
   });
 });
+
+/**
+ * DeepSeek Provider Registry Integration Tests
+ *
+ * Story 13-5: DeepSeek Integration
+ * Verifies DeepSeekProvider is correctly registered and discoverable via ProviderRegistry.
+ */
+describe('DeepSeek Provider Registry Integration (Story 13-5)', () => {
+  it('should register DeepSeekProvider in ProviderRegistry via createProviderRegistry()', () => {
+    const { createProviderRegistry } = require('../index');
+    const registry = createProviderRegistry();
+
+    const provider = registry.getProvider('deepseek');
+    expect(provider).toBeDefined();
+    expect(provider!.id).toBe('deepseek');
+  });
+
+  it('should return DeepSeekProvider for getProviderForModel("deepseek-chat")', () => {
+    const { createProviderRegistry } = require('../index');
+    const registry = createProviderRegistry();
+
+    const provider = registry.getProviderForModel('deepseek-chat');
+    expect(provider).toBeDefined();
+    expect(provider!.id).toBe('deepseek');
+  });
+
+  it('should return DeepSeekProvider for getProviderForModel("deepseek-reasoner")', () => {
+    const { createProviderRegistry } = require('../index');
+    const registry = createProviderRegistry();
+
+    const provider = registry.getProviderForModel('deepseek-reasoner');
+    expect(provider).toBeDefined();
+    expect(provider!.id).toBe('deepseek');
+  });
+
+  it('should have isProviderEnabled("deepseek") return true by default', () => {
+    const { createProviderRegistry } = require('../index');
+    const registry = createProviderRegistry();
+
+    expect(registry.isProviderEnabled('deepseek')).toBe(true);
+  });
+
+  it('should list DeepSeek in all registered providers', () => {
+    const { createProviderRegistry } = require('../index');
+    const registry = createProviderRegistry();
+
+    const allProviders = registry.getAllProviders();
+    const deepseek = allProviders.find((p: any) => p.id === 'deepseek');
+    expect(deepseek).toBeDefined();
+  });
+
+  it('should list DeepSeek in enabled providers', () => {
+    const { createProviderRegistry } = require('../index');
+    const registry = createProviderRegistry();
+
+    const enabledProviders = registry.getEnabledProviders();
+    const deepseek = enabledProviders.find((p: any) => p.id === 'deepseek');
+    expect(deepseek).toBeDefined();
+  });
+});

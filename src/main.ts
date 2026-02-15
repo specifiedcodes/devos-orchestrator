@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import { CliModule, CliModuleConfig } from './cli';
 import { createProviderRegistry, ProviderRegistry } from './providers';
 import { createModelRegistryClient, ModelRegistryClient } from './model-registry';
+import { createTaskModelRouter, TaskModelRouter } from './router';
 
 dotenv.config();
 
@@ -23,6 +24,9 @@ let providerRegistry: ProviderRegistry | null = null;
 
 // Model Registry Client instance (initialized on startup)
 let modelRegistryClient: ModelRegistryClient | null = null;
+
+// Task Model Router instance (initialized on startup)
+let taskModelRouter: TaskModelRouter | null = null;
 
 /**
  * Initializes the orchestrator services
@@ -64,6 +68,10 @@ async function initialize(): Promise<void> {
   // Initialize Model Registry Client
   modelRegistryClient = createModelRegistryClient();
   console.log('Model Registry Client initialized');
+
+  // Initialize Task Model Router
+  taskModelRouter = createTaskModelRouter(providerRegistry, modelRegistryClient);
+  console.log('Task Model Router initialized');
 }
 
 /**
@@ -101,7 +109,8 @@ initialize().catch((error) => {
 });
 
 // Export for external access
-export { cliModule, providerRegistry, modelRegistryClient };
+export { cliModule, providerRegistry, modelRegistryClient, taskModelRouter };
 export { CliModule } from './cli';
 export { ProviderRegistry, createProviderRegistry } from './providers';
 export { ModelRegistryClient, createModelRegistryClient } from './model-registry';
+export { TaskModelRouter, createTaskModelRouter } from './router';

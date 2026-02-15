@@ -11,6 +11,9 @@ import {
   GenerativeModel,
   Content,
   Part,
+  HarmCategory,
+  HarmBlockThreshold,
+  SafetySetting,
 } from '@google/generative-ai';
 import { BaseProvider } from './base.provider';
 import {
@@ -33,6 +36,49 @@ const GOOGLE_PRICING: Record<string, ModelPricing> = {
 };
 
 const SUPPORTED_MODELS = Object.keys(GOOGLE_PRICING);
+
+/**
+ * Google safety setting categories
+ */
+export interface GoogleSafetySettings {
+  harmBlockThreshold: 'BLOCK_NONE' | 'BLOCK_ONLY_HIGH' | 'BLOCK_MEDIUM_AND_ABOVE' | 'BLOCK_LOW_AND_ABOVE';
+}
+
+/**
+ * Default safety settings - permissive for development tasks
+ */
+const DEFAULT_SAFETY_SETTINGS: GoogleSafetySettings = {
+  harmBlockThreshold: 'BLOCK_ONLY_HIGH' as const,
+};
+
+/**
+ * Safety categories to apply settings to
+ */
+const SAFETY_CATEGORIES: HarmCategory[] = [
+  HarmCategory.HARM_CATEGORY_HARASSMENT,
+  HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+  HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+  HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+];
+
+/**
+ * Build SafetySetting array from threshold string
+ */
+function buildSafetySettings(thresholdStr: string): SafetySetting[] {
+  const thresholdMap: Record<string, HarmBlockThreshold> = {
+    'BLOCK_NONE': HarmBlockThreshold.BLOCK_NONE,
+    'BLOCK_ONLY_HIGH': HarmBlockThreshold.BLOCK_ONLY_HIGH,
+    'BLOCK_MEDIUM_AND_ABOVE': HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+    'BLOCK_LOW_AND_ABOVE': HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+  };
+
+  const threshold = thresholdMap[thresholdStr] || HarmBlockThreshold.BLOCK_ONLY_HIGH;
+
+  return SAFETY_CATEGORIES.map(category => ({
+    category,
+    threshold,
+  }));
+}
 
 /**
  * Google Gemini provider implementation
@@ -97,6 +143,11 @@ export class GoogleAIProvider extends BaseProvider {
     const model = this.getModel(client, request);
     const contents = this.mapMessages(request);
 
+    // Resolve safety settings: use per-request metadata override, or default
+    const requestSafetySettings = request.metadata?.safetySettings as GoogleSafetySettings | undefined;
+    const safetyThreshold = requestSafetySettings?.harmBlockThreshold ?? DEFAULT_SAFETY_SETTINGS.harmBlockThreshold;
+    const safetySettings = buildSafetySettings(safetyThreshold);
+
     try {
       const result = await model.generateContent({
         contents,
@@ -106,6 +157,7 @@ export class GoogleAIProvider extends BaseProvider {
           ...(request.topP !== undefined ? { topP: request.topP } : {}),
           ...(request.stopSequences ? { stopSequences: request.stopSequences } : {}),
         },
+        safetySettings,
       });
 
       const response = result.response;
@@ -120,8 +172,19 @@ export class GoogleAIProvider extends BaseProvider {
 
       // Check for safety blocks
       if (candidate?.finishReason === 'SAFETY') {
+        // Build descriptive message with safety rating details
+        const safetyRatings = candidate.safetyRatings;
+        let blockedCategory = 'unknown category';
+        if (safetyRatings && safetyRatings.length > 0) {
+          const highRating = safetyRatings.find(
+            (r: { probability: string }) => r.probability === 'HIGH' || r.probability === 'MEDIUM',
+          );
+          if (highRating) {
+            blockedCategory = (highRating as { category: string }).category;
+          }
+        }
         throw new ProviderError(
-          'Content blocked by safety filter',
+          `Content blocked by safety filter (category: ${blockedCategory})`,
           'content_filter_error',
           this.id,
         );
@@ -180,6 +243,11 @@ export class GoogleAIProvider extends BaseProvider {
     const model = this.getModel(client, request);
     const contents = this.mapMessages(request);
 
+    // Resolve safety settings for streaming: use per-request metadata override, or default
+    const streamRequestSafetySettings = request.metadata?.safetySettings as GoogleSafetySettings | undefined;
+    const streamSafetyThreshold = streamRequestSafetySettings?.harmBlockThreshold ?? DEFAULT_SAFETY_SETTINGS.harmBlockThreshold;
+    const streamSafetySettings = buildSafetySettings(streamSafetyThreshold);
+
     async function* generateStream(): AsyncIterable<StreamChunk> {
       try {
         const result = await model.generateContentStream({
@@ -190,6 +258,7 @@ export class GoogleAIProvider extends BaseProvider {
             ...(request.topP !== undefined ? { topP: request.topP } : {}),
             ...(request.stopSequences ? { stopSequences: request.stopSequences } : {}),
           },
+          safetySettings: streamSafetySettings,
         });
 
         yield { type: 'message_start' };
@@ -204,8 +273,29 @@ export class GoogleAIProvider extends BaseProvider {
           }
         }
 
-        // Get final response for usage
+        // Get final response for usage and safety check
         const finalResponse = await result.response;
+        const finalCandidate = finalResponse.candidates?.[0];
+
+        // Check for safety blocks in the final response
+        if (finalCandidate?.finishReason === 'SAFETY') {
+          const safetyRatings = finalCandidate.safetyRatings;
+          let blockedCategory = 'unknown category';
+          if (safetyRatings && safetyRatings.length > 0) {
+            const highRating = safetyRatings.find(
+              (r: { probability: string }) => r.probability === 'HIGH' || r.probability === 'MEDIUM',
+            );
+            if (highRating) {
+              blockedCategory = (highRating as { category: string }).category;
+            }
+          }
+          yield {
+            type: 'error',
+            error: `Content blocked by safety filter (category: ${blockedCategory})`,
+          };
+          return;
+        }
+
         const usageMetadata = finalResponse.usageMetadata;
 
         yield {

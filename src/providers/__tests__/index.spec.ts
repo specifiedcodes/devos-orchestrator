@@ -71,4 +71,45 @@ describe('createProviderRegistry', () => {
     expect(registry.isProviderEnabled('google')).toBe(true);
     expect(registry.isProviderEnabled('deepseek')).toBe(true);
   });
+
+  // Story 13-4: Google provider integration verification
+  describe('Google provider integration (Story 13-4)', () => {
+    it('should register GoogleAIProvider in registry after createProviderRegistry()', () => {
+      const registry = createProviderRegistry();
+      const google = registry.getProvider('google');
+
+      expect(google).toBeDefined();
+      expect(google!.id).toBe('google');
+    });
+
+    it('should return GoogleAIProvider for gemini-2.0-flash via getProviderForModel()', () => {
+      const registry = createProviderRegistry();
+      const provider = registry.getProviderForModel('gemini-2.0-flash');
+
+      expect(provider).toBeDefined();
+      expect(provider!.id).toBe('google');
+    });
+
+    it('should return GoogleAIProvider for gemini-2.0-pro via getProviderForModel()', () => {
+      const registry = createProviderRegistry();
+      const provider = registry.getProviderForModel('gemini-2.0-pro');
+
+      expect(provider).toBeDefined();
+      expect(provider!.id).toBe('google');
+    });
+
+    it('should return GoogleAIProvider for text-embedding-004 via getProviderForModel()', () => {
+      const registry = createProviderRegistry();
+      const provider = registry.getProviderForModel('text-embedding-004');
+
+      expect(provider).toBeDefined();
+      expect(provider!.id).toBe('google');
+    });
+
+    it('should report isProviderEnabled("google") as true by default', () => {
+      const registry = createProviderRegistry();
+
+      expect(registry.isProviderEnabled('google')).toBe(true);
+    });
+  });
 });

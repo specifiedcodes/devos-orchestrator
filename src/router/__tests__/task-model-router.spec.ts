@@ -1014,6 +1014,57 @@ describe('TaskModelRouter', () => {
     });
   });
 
+  // ===== Story 13-4: Google Gemini Routing Integration Tests =====
+
+  describe('Google Gemini routing (Story 13-4)', () => {
+    it('should select gemini-2.0-flash for simple_chat when Google provider enabled', async () => {
+      const request = createRequest({ taskType: 'simple_chat' });
+      const config = createDefaultWorkspaceConfig();
+
+      const decision = await router.routeTask(request, config);
+
+      expect(decision.selectedModel).toBe('gemini-2.0-flash');
+      expect(decision.provider).toBe('google');
+    });
+
+    it('should select gemini-2.0-flash for summarization when Google provider enabled', async () => {
+      const request = createRequest({ taskType: 'summarization' });
+      const config = createDefaultWorkspaceConfig();
+
+      const decision = await router.routeTask(request, config);
+
+      expect(decision.selectedModel).toBe('gemini-2.0-flash');
+      expect(decision.provider).toBe('google');
+    });
+
+    it('should select text-embedding-004 as fallback when OpenAI not available but Google is', async () => {
+      const request = createRequest({ taskType: 'embedding' });
+      const config = createDefaultWorkspaceConfig({
+        enabledProviders: ['anthropic', 'google', 'deepseek'] as ProviderID[],
+      });
+
+      const decision = await router.routeTask(request, config);
+
+      // Default embedding is text-embedding-3-small (openai) but openai is disabled
+      // Should fall back to text-embedding-004 (google)
+      expect(decision.selectedModel).toBe('text-embedding-004');
+      expect(decision.provider).toBe('google');
+    });
+
+    it('should fall back correctly when Google provider not in enabledProviders for simple_chat', async () => {
+      const request = createRequest({ taskType: 'simple_chat' });
+      const config = createDefaultWorkspaceConfig({
+        enabledProviders: ['anthropic', 'openai'] as ProviderID[],
+      });
+
+      const decision = await router.routeTask(request, config);
+
+      // Default simple_chat is gemini-2.0-flash, but google disabled
+      // Should fall back to a suitable model from enabled providers
+      expect(decision.provider).not.toBe('google');
+    });
+  });
+
   // ===== isModelAvailable Tests =====
 
   describe('isModelAvailable', () => {

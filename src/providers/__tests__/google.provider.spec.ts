@@ -4,6 +4,7 @@
  * Tests for Google Gemini provider implementation.
  *
  * Story 13-1: Provider Abstraction Layer
+ * Story 13-4: Google Gemini Integration (safety settings, registry verification)
  */
 
 import { GoogleAIProvider } from '../google.provider';
@@ -27,8 +28,18 @@ jest.mock('@google/generative-ai', () => {
         embedContent: mockEmbedContent,
       }),
     })),
-    HarmCategory: {},
-    HarmBlockThreshold: {},
+    HarmCategory: {
+      HARM_CATEGORY_HARASSMENT: 'HARM_CATEGORY_HARASSMENT',
+      HARM_CATEGORY_HATE_SPEECH: 'HARM_CATEGORY_HATE_SPEECH',
+      HARM_CATEGORY_SEXUALLY_EXPLICIT: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+      HARM_CATEGORY_DANGEROUS_CONTENT: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+    },
+    HarmBlockThreshold: {
+      BLOCK_NONE: 'BLOCK_NONE',
+      BLOCK_ONLY_HIGH: 'BLOCK_ONLY_HIGH',
+      BLOCK_MEDIUM_AND_ABOVE: 'BLOCK_MEDIUM_AND_ABOVE',
+      BLOCK_LOW_AND_ABOVE: 'BLOCK_LOW_AND_ABOVE',
+    },
     FunctionDeclarationSchemaType: {},
   };
 });
@@ -279,6 +290,213 @@ describe('GoogleAIProvider', () => {
       // output: 500K * $0.40/1M = $0.20
       // total = $0.30
       expect(cost.amount).toBeCloseTo(0.30, 4);
+    });
+  });
+
+  // ===== Story 13-4: Safety Settings Tests =====
+
+  describe('Safety settings', () => {
+    const baseRequest: CompletionRequest = {
+      model: 'gemini-2.0-flash',
+      messages: [
+        { role: 'user', content: 'Hello' },
+      ],
+      maxTokens: 1024,
+    };
+
+    const successResponse = {
+      response: {
+        text: () => 'Response',
+        candidates: [{
+          content: { parts: [{ text: 'Response' }] },
+          finishReason: 'STOP',
+        }],
+        usageMetadata: { promptTokenCount: 10, candidatesTokenCount: 5 },
+      },
+    };
+
+    it('should apply default safety settings (BLOCK_ONLY_HIGH) to complete() calls', async () => {
+      mockGenerateContent.mockResolvedValue(successResponse);
+
+      await provider.complete(baseRequest, 'test-key');
+
+      const callArgs = mockGenerateContent.mock.calls[0][0];
+      expect(callArgs.safetySettings).toBeDefined();
+      expect(callArgs.safetySettings).toHaveLength(4);
+      // All categories should use BLOCK_ONLY_HIGH threshold by default
+      for (const setting of callArgs.safetySettings) {
+        expect(setting.threshold).toBe('BLOCK_ONLY_HIGH');
+      }
+    });
+
+    it('should use BLOCK_ONLY_HIGH as default harmBlockThreshold', async () => {
+      mockGenerateContent.mockResolvedValue(successResponse);
+
+      await provider.complete(baseRequest, 'test-key');
+
+      const callArgs = mockGenerateContent.mock.calls[0][0];
+      expect(callArgs.safetySettings[0].threshold).toBe('BLOCK_ONLY_HIGH');
+    });
+
+    it('should apply custom safety settings from request.metadata.safetySettings in complete()', async () => {
+      mockGenerateContent.mockResolvedValue(successResponse);
+
+      const requestWithCustomSafety: CompletionRequest = {
+        ...baseRequest,
+        metadata: {
+          safetySettings: {
+            harmBlockThreshold: 'BLOCK_NONE',
+          },
+        },
+      };
+
+      await provider.complete(requestWithCustomSafety, 'test-key');
+
+      const callArgs = mockGenerateContent.mock.calls[0][0];
+      expect(callArgs.safetySettings).toBeDefined();
+      for (const setting of callArgs.safetySettings) {
+        expect(setting.threshold).toBe('BLOCK_NONE');
+      }
+    });
+
+    it('should apply default safety settings to stream() calls', async () => {
+      const mockStreamResponse = {
+        stream: {
+          [Symbol.asyncIterator]: async function* () {
+            yield { text: () => 'Hello' };
+          },
+        },
+        response: Promise.resolve({
+          usageMetadata: { promptTokenCount: 10, candidatesTokenCount: 5 },
+        }),
+      };
+      mockGenerateContentStream.mockResolvedValue(mockStreamResponse);
+
+      const chunks: any[] = [];
+      for await (const chunk of provider.stream(baseRequest, 'test-key')) {
+        chunks.push(chunk);
+      }
+
+      const callArgs = mockGenerateContentStream.mock.calls[0][0];
+      expect(callArgs.safetySettings).toBeDefined();
+      expect(callArgs.safetySettings).toHaveLength(4);
+      for (const setting of callArgs.safetySettings) {
+        expect(setting.threshold).toBe('BLOCK_ONLY_HIGH');
+      }
+    });
+
+    it('should apply custom safety settings from request.metadata.safetySettings in stream()', async () => {
+      const mockStreamResponse = {
+        stream: {
+          [Symbol.asyncIterator]: async function* () {
+            yield { text: () => 'Hello' };
+          },
+        },
+        response: Promise.resolve({
+          usageMetadata: { promptTokenCount: 10, candidatesTokenCount: 5 },
+        }),
+      };
+      mockGenerateContentStream.mockResolvedValue(mockStreamResponse);
+
+      const requestWithCustomSafety: CompletionRequest = {
+        ...baseRequest,
+        metadata: {
+          safetySettings: {
+            harmBlockThreshold: 'BLOCK_MEDIUM_AND_ABOVE',
+          },
+        },
+      };
+
+      const chunks: any[] = [];
+      for await (const chunk of provider.stream(requestWithCustomSafety, 'test-key')) {
+        chunks.push(chunk);
+      }
+
+      const callArgs = mockGenerateContentStream.mock.calls[0][0];
+      expect(callArgs.safetySettings).toBeDefined();
+      for (const setting of callArgs.safetySettings) {
+        expect(setting.threshold).toBe('BLOCK_MEDIUM_AND_ABOVE');
+      }
+    });
+
+    it('should throw content_filter_error with descriptive message when safety block returned', async () => {
+      mockGenerateContent.mockResolvedValue({
+        response: {
+          text: () => '',
+          candidates: [{
+            content: { parts: [{ text: '' }] },
+            finishReason: 'SAFETY',
+            safetyRatings: [
+              { category: 'HARM_CATEGORY_HARASSMENT', probability: 'HIGH' },
+              { category: 'HARM_CATEGORY_HATE_SPEECH', probability: 'NEGLIGIBLE' },
+            ],
+          }],
+          usageMetadata: { promptTokenCount: 10, candidatesTokenCount: 0 },
+        },
+      });
+
+      await expect(
+        provider.complete(baseRequest, 'test-key'),
+      ).rejects.toMatchObject({
+        type: 'content_filter_error',
+        message: expect.stringContaining('HARM_CATEGORY_HARASSMENT'),
+      });
+    });
+
+    it('should not affect embedding requests (no safetySettings on embed)', async () => {
+      const mockEmbeddingResult = [0.1, 0.2, 0.3];
+      mockEmbedContent.mockResolvedValue({
+        embedding: { values: mockEmbeddingResult },
+      });
+
+      const result = await provider.embed('test text', 'text-embedding-004', 'test-key');
+
+      expect(result).toEqual(mockEmbeddingResult);
+      // embedContent should not have safetySettings
+      const callArgs = mockEmbedContent.mock.calls[0];
+      // embed calls embedContent directly with text only, no safetySettings
+      expect(callArgs[0]).toBe('test text');
+    });
+
+    it('should include all 4 safety categories in settings', async () => {
+      mockGenerateContent.mockResolvedValue(successResponse);
+
+      await provider.complete(baseRequest, 'test-key');
+
+      const callArgs = mockGenerateContent.mock.calls[0][0];
+      const categories = callArgs.safetySettings.map((s: any) => s.category);
+      expect(categories).toContain('HARM_CATEGORY_HARASSMENT');
+      expect(categories).toContain('HARM_CATEGORY_HATE_SPEECH');
+      expect(categories).toContain('HARM_CATEGORY_SEXUALLY_EXPLICIT');
+      expect(categories).toContain('HARM_CATEGORY_DANGEROUS_CONTENT');
+    });
+  });
+
+  // ===== Story 13-4: Provider Registry Integration Verification =====
+
+  describe('Provider Registry Integration', () => {
+    it('should be instantiable as GoogleAIProvider', () => {
+      expect(provider).toBeInstanceOf(GoogleAIProvider);
+    });
+
+    it('should have id "google"', () => {
+      expect(provider.id).toBe('google');
+    });
+
+    it('should support gemini-2.0-flash model', () => {
+      expect(provider.supportsModel('gemini-2.0-flash')).toBe(true);
+    });
+
+    it('should support gemini-2.0-pro model', () => {
+      expect(provider.supportsModel('gemini-2.0-pro')).toBe(true);
+    });
+
+    it('should support text-embedding-004 model', () => {
+      expect(provider.supportsModel('text-embedding-004')).toBe(true);
+    });
+
+    it('should report config.enabled as true', () => {
+      expect(provider.config.enabled).toBe(true);
     });
   });
 });

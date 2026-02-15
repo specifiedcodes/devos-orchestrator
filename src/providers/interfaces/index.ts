@@ -18,6 +18,8 @@ export {
   ProviderHealthStatus,
   ProviderConfig,
   ModelPricing,
+  TaskType,
+  VALID_TASK_TYPES,
   ProviderErrorType,
   ProviderError,
 } from './provider.interfaces';

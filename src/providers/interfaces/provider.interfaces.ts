@@ -139,6 +139,32 @@ export interface ModelPricing {
 }
 
 /**
+ * Classification of AI task types for routing decisions.
+ * Identical to devos-api definition (shared by convention).
+ */
+export type TaskType =
+  | 'coding'
+  | 'planning'
+  | 'review'
+  | 'summarization'
+  | 'embedding'
+  | 'simple_chat'
+  | 'complex_reasoning';
+
+/**
+ * Valid TaskType values for runtime validation
+ */
+export const VALID_TASK_TYPES: TaskType[] = [
+  'coding',
+  'planning',
+  'review',
+  'summarization',
+  'embedding',
+  'simple_chat',
+  'complex_reasoning',
+];
+
+/**
  * Unified error types across providers
  */
 export type ProviderErrorType =

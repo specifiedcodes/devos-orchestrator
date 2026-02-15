@@ -8,6 +8,7 @@
 import dotenv from 'dotenv';
 import { CliModule, CliModuleConfig } from './cli';
 import { createProviderRegistry, ProviderRegistry } from './providers';
+import { createModelRegistryClient, ModelRegistryClient } from './model-registry';
 
 dotenv.config();
 
@@ -19,6 +20,9 @@ let cliModule: CliModule | null = null;
 
 // Provider Registry instance (initialized on startup)
 let providerRegistry: ProviderRegistry | null = null;
+
+// Model Registry Client instance (initialized on startup)
+let modelRegistryClient: ModelRegistryClient | null = null;
 
 /**
  * Initializes the orchestrator services
@@ -56,6 +60,10 @@ async function initialize(): Promise<void> {
   // Initialize Provider Registry
   providerRegistry = createProviderRegistry();
   console.log('Provider Registry initialized with', providerRegistry.getAllProviders().length, 'providers');
+
+  // Initialize Model Registry Client
+  modelRegistryClient = createModelRegistryClient();
+  console.log('Model Registry Client initialized');
 }
 
 /**
@@ -93,6 +101,7 @@ initialize().catch((error) => {
 });
 
 // Export for external access
-export { cliModule, providerRegistry };
+export { cliModule, providerRegistry, modelRegistryClient };
 export { CliModule } from './cli';
 export { ProviderRegistry, createProviderRegistry } from './providers';
+export { ModelRegistryClient, createModelRegistryClient } from './model-registry';

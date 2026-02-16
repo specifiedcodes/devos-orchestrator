@@ -9,7 +9,8 @@
     "dev": "ts-node-dev --respawn --transpile-only src/main.ts",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "type-check": "tsc --noEmit"
   },
   "keywords": [
     "ai",

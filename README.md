@@ -1,5 +1,7 @@
 # DevOS Orchestrator
 
+![CI](https://github.com/devos-platform/devos-orchestrator/actions/workflows/ci.yml/badge.svg)
+
 AI agent orchestration engine for the DevOS platform using Claude AI and BullMQ.
 
 ## Technology Stack

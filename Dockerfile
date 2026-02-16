@@ -24,4 +24,6 @@ COPY package*.json ./
 RUN npm prune --production
 USER devos
 EXPOSE 3003
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD node -e "process.exit(0)" || exit 1
 CMD ["node", "dist/main.js"]
